@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math/big"
 	"reflect"
 
 	"github.com/fogleman/gg"
@@ -14,8 +15,8 @@ The p[] slice is getting off somewhere, maybe they should all be uint64?
 That doesn't seem right though since f[]%m is bounded by m...
 */
 
-const maxSlice = 10000
-const moreSlice = 2500
+const maxSlice = 1000
+const moreSlice = 250
 
 func generateFibonacci(l int) []uint64 {
 	f := make([]uint64, 0, maxSlice)
@@ -29,10 +30,10 @@ func generateFibonacci(l int) []uint64 {
 	return f
 }
 
-func PisanoPeriod(m uint) ([]uint, error) {
+func PisanoPeriod(m uint) ([]uint64, error) {
 	currSlice := moreSlice
-	f := make([]uint64, currSlice, maxSlice)
-	p := make([]uint, currSlice, maxSlice)
+	f := make([]big.Int, currSlice, maxSlice)
+	p := make([]uint64, currSlice, maxSlice)
 	cycle := 0
 	for i := 0; i < maxSlice; i++ {
 		if i == currSlice {
@@ -42,20 +43,25 @@ func PisanoPeriod(m uint) ([]uint, error) {
 		}
 		// fibonnaci sequence
 		if i == 0 || i == 1 {
-			f[i] = uint64(i)
+
+			f[i] = *big.NewInt(int64(i))
 		} else {
-			f[i] = f[i-1] + f[i-2]
+			//f[i] = f[i-1] + f[i-2]
+			f[i] = *big.NewInt(int64(0)).Add(&f[i-1], &f[i-2])
 		}
-		p[i] = uint(f[i] % uint64(m))
+		//p[i] = uint(f[i] % uint64(m))
+		p[i] = big.NewInt(int64(0)).Mod(&f[i], big.NewInt(int64(m))).Uint64()
 		// requirements for beginning of pisano period
 		if i > 3 && p[i] == 1 && p[i-1] == 1 && p[i-2] == 0 {
 			cycle = i - 2
 		}
 		if i%2 == 0 && cycle == i/2 && cycle != 0 {
-			fmt.Printf("%v\n", f[i])
-			fmt.Printf("%v\n", f[i]%uint64(m))
-			fmt.Printf("%v\n", p[0:cycle])
-			fmt.Printf("%v\n", p[cycle:i])
+			/*
+				fmt.Printf("%v\n", f[i])
+				fmt.Printf("%v\n", big.NewInt(int64(0)).Mod(&f[i], big.NewInt(int64(m))).Uint64())
+				fmt.Printf("First Cycle: %v\n", p[0:cycle])
+				fmt.Printf("Second Cycle: %v\n", p[cycle:i])
+			*/
 			if reflect.DeepEqual(p[0:cycle], p[cycle:i]) {
 				return p[0:cycle], nil
 			} else {
