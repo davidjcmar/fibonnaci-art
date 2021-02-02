@@ -88,13 +88,13 @@ func convertPeriodToXy(m uint, p []uint64, cx, cy, r float64) ([]coord, error) {
 	return coords, nil
 }
 func main() {
-	modulo := uint(10)
+	modulo := uint(73)
 	width := 1000
 	height := 1000
 	circleCenterW := float64(width / 2)
 	circleCenterH := float64(height / 2)
 	radius := float64(400)
-	lineWdith := float64(5)
+	lineWdith := float64(2)
 
 	pp, ppErr := PisanoPeriod(modulo)
 	if ppErr != nil {
@@ -105,13 +105,18 @@ func main() {
 	dc := gg.NewContext(width, height)
 	dc.DrawCircle(circleCenterW, circleCenterH, radius)
 	dc.SetRGB(0, 0, 0)
-	dc.SetLineWidth(5)
+	dc.SetLineWidth(lineWdith)
 	dc.Fill()
 	dc.DrawCircle(circleCenterW, circleCenterH, radius-lineWdith)
 	dc.SetRGB(1, 1, 1)
 	dc.Fill()
-	for i, v := range(coords) {
-		dc.DrawLine
+	dc.SetRGB(.75, 0, 1)
+	for i, _ := range coords {
+		if i == len(coords)-1 {
+			break
+		}
+		dc.DrawLine(coords[i].x, coords[i].y, coords[i+1].x, coords[i+1].y)
+		dc.Stroke()
 	}
 	dc.SavePNG("out.png")
 }
