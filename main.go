@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 	"math/big"
 	"reflect"
 
@@ -17,6 +18,10 @@ That doesn't seem right though since f[]%m is bounded by m...
 
 const maxSlice = 1000
 const moreSlice = 250
+
+type coord struct {
+	x, y float64
+}
 
 func generateFibonacci(l int) []uint64 {
 	f := make([]uint64, 0, maxSlice)
@@ -72,19 +77,41 @@ func PisanoPeriod(m uint) ([]uint64, error) {
 	return nil, errors.New("No period")
 }
 
+func convertPeriodToXy(m uint, p []uint64, cx, cy, r float64) ([]coord, error) {
+	coords := make([]coord, len(p))
+	for i, v := range p {
+		a := (2 * math.Pi) / float64(m)
+		x := cx + (r * math.Cos(float64(a*float64(v))))
+		y := cy + (r * math.Sin(float64(a*float64(v))))
+		coords[i].x, coords[i].y = x, y
+	}
+	return coords, nil
+}
 func main() {
-	fmt.Print(PisanoPeriod(10))
-	imageSize := 1000
-	circleCenter := float64(imageSize / 2)
+	modulo := uint(10)
+	width := 1000
+	height := 1000
+	circleCenterW := float64(width / 2)
+	circleCenterH := float64(height / 2)
 	radius := float64(400)
 	lineWdith := float64(5)
-	dc := gg.NewContext(imageSize, imageSize)
-	dc.DrawCircle(circleCenter, circleCenter, radius)
+
+	pp, ppErr := PisanoPeriod(modulo)
+	if ppErr != nil {
+		fmt.Printf("Handle error ya bish")
+	}
+	coords, _ := convertPeriodToXy(modulo, pp, circleCenterW, circleCenterH, radius)
+	fmt.Printf("%v", coords)
+	dc := gg.NewContext(width, height)
+	dc.DrawCircle(circleCenterW, circleCenterH, radius)
 	dc.SetRGB(0, 0, 0)
 	dc.SetLineWidth(5)
 	dc.Fill()
-	dc.DrawCircle(circleCenter, circleCenter, radius-lineWdith)
+	dc.DrawCircle(circleCenterW, circleCenterH, radius-lineWdith)
 	dc.SetRGB(1, 1, 1)
 	dc.Fill()
+	for i, v := range(coords) {
+		dc.DrawLine
+	}
 	dc.SavePNG("out.png")
 }
