@@ -87,8 +87,11 @@ func convertPeriodToXy(m uint, p []uint64, cx, cy, r float64) ([]coord, error) {
 	}
 	return coords, nil
 }
+
+
+
 func main() {
-	modulo := uint(73)
+	modulo := uint(17)
 	width := 1000
 	height := 1000
 	circleCenterW := float64(width / 2)
@@ -103,14 +106,15 @@ func main() {
 	coords, _ := convertPeriodToXy(modulo, pp, circleCenterW, circleCenterH, radius)
 	fmt.Printf("%v", coords)
 	dc := gg.NewContext(width, height)
-	dc.DrawCircle(circleCenterW, circleCenterH, radius)
+	dc.DrawCircle(circleCenterW, circleCenterH, radius+lineWdith)
 	dc.SetRGB(0, 0, 0)
 	dc.SetLineWidth(lineWdith)
 	dc.Fill()
-	dc.DrawCircle(circleCenterW, circleCenterH, radius-lineWdith)
+	dc.DrawCircle(circleCenterW, circleCenterH, radius)
 	dc.SetRGB(1, 1, 1)
 	dc.Fill()
-	dc.SetRGB(.75, 0, 1)
+	dc.SetRGB(.5, 0, 1)
+	dc.RotateAbout(math.Pi/2, circleCenterW, circleCenterH)
 	for i, _ := range coords {
 		if i == len(coords)-1 {
 			break
