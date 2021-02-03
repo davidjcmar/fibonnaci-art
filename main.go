@@ -16,7 +16,7 @@ The p[] slice is getting off somewhere, maybe they should all be uint64?
 That doesn't seem right though since f[]%m is bounded by m...
 */
 
-const maxSlice = 1000
+const maxSlice = 100000
 const moreSlice = 250
 
 type coord struct {
@@ -91,13 +91,13 @@ func convertPeriodToXy(m uint, p []uint64, cx, cy, r float64) ([]coord, error) {
 
 
 func main() {
-	modulo := uint(17)
+	modulo := uint(4)
 	width := 1000
 	height := 1000
 	circleCenterW := float64(width / 2)
 	circleCenterH := float64(height / 2)
 	radius := float64(400)
-	lineWdith := float64(2)
+	lineWdith := float64(3)
 
 	pp, ppErr := PisanoPeriod(modulo)
 	if ppErr != nil {
